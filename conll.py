@@ -16,10 +16,10 @@ class WordInstance(object):
         return self.word.lower()  # TODO: Use a lemmatizer?
 
     def __str__(self):
-        if self.label:
+        if self.label is not None:
             return "%s\t%s" % (self.word, NLL2RDF_CLASSES[self.label])
         else:
-            return "%d\t%s\t%s\t%s\t%s" % (self.position, self.word, self.tag, self.dependency, sel.head)
+            return "%s\t%s\t%s\t%s\t%s" % (self.position, self.word, self.tag, self.dependency, self.head)
 
     def __repr__(self):
         return str(self)

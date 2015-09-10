@@ -5,7 +5,7 @@ from conll import *
 from utils import *
 
 
-def parse_annotated_document(document_path):
+def parse_conll_document(document_path):
     sentences = []
     words = []
     odrl_action = 0
@@ -22,8 +22,10 @@ def parse_annotated_document(document_path):
             else:
                 token_data = line.split()
 
-                if ODRL_CLASSES_MAPPINGS[token_data[10]] == 1:
-                    nll2rdf_class = (1, 0)
+                if len(token_data) == 10:
+                    label = None
+                elif ODRL_CLASSES_MAPPINGS[token_data[10]] == 1:
+                    label = NLL2RDF_CLASSES_MAPPINGS[(1, 0)]
                 else:
                     odrl_action = ODRL_ACTIONS_MAPPINGS[token_data[11]] if len(token_data) == 12 else odrl_action
 
@@ -32,10 +34,12 @@ def parse_annotated_document(document_path):
                         odrl_action
                     )
 
+                    label = NLL2RDF_CLASSES_MAPPINGS[nll2rdf_class]
+
                 words.append(
                     WordInstance(
                         word=token_data[1],
-                        label=NLL2RDF_CLASSES_MAPPINGS[nll2rdf_class],
+                        label=label,
                         tag=token_data[3],
                         dependency=token_data[7],
                         head=token_data[6],
