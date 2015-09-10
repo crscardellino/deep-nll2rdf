@@ -58,3 +58,6 @@ target/
 
 # NLL Corpus
 corpus/
+
+# PyCharm
+.idea/
