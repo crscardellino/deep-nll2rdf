@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 from corpus import UntaggedCorpusIterator
 from gensim.models import Word2Vec
 
@@ -58,8 +59,10 @@ if __name__ == "__main__":
         "cbow_mean": 1 if args.cbow_mean else 0
     }
 
+    print >> sys.stderr, "Training Word2Vec model on %s corpus." % sentences.corpus_directory
     model = Word2Vec(sentences, **model_config)
 
+    print >> sys.stderr, "Saving the model in %s." % args.train
     if args.gensim_save:
         model.save(args.output)
     else:
