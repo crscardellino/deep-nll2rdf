@@ -55,3 +55,12 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# NLL Corpus
+corpus/
+
+# PyCharm
+.idea/
+
+# OSX
+.DS_Store
