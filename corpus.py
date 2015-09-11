@@ -91,6 +91,8 @@ class UntaggedCorpusIterator(object):
         else:
             line = re.sub(r"[^a-zA-Z0-9]", ' ', line)
 
+        line = line.lower()
+
         if self.remove_stop_words:
             return [w for w in line.split() if w not in set(stopwords.words("english"))]
         else:
