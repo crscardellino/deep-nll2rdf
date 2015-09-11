@@ -11,9 +11,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Word2Vec algorithm")
     parser.add_argument("train", type=str, metavar="CORPUS_DIRECTORY", help="Path to the corpus directory.")
     parser.add_argument("--output", type=str, metavar="OUTPUT", help="File to dump the word vectors.",
-                        default=os.path.join(os.path.abspath(__file__), "vectors.bin"))
+                        default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "vectors.bin"))
     parser.add_argument("--vocab", type=str, metavar="VOCAB_OUTPUT", help="File to dump the vocabulary",
-                        default=os.path.join(os.path.abspath(__file__), "vocabulary"))
+                        default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary"))
     parser.add_argument("--size", type=int, metavar="SIZE", help="Set size of word vectors.",
                         default=100)
     parser.add_argument("--window", type=int, metavar="WINDOW", help="Max skip length between words.",
