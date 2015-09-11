@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from conll import *
+from corpus import *
 from utils import *
 
 

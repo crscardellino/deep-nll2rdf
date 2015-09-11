@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
+import re
+from nltk.corpus import stopwords
 from utils import NLL2RDF_CLASSES
 
 
@@ -65,3 +68,30 @@ class CoNLLDocument(object):
 
     def __repr__(self):
         return str(self)
+
+
+class UntaggedCorpusIterator(object):
+    def __init__(self, corpus_directory, remove_numbers=False, remove_stop_words=False):
+        self.corpus_directory = corpus_directory
+        self.remove_stop_words = remove_stop_words
+        self.remove_numbers = remove_numbers
+
+    def __iter__(self):
+        for fname in os.listdir(self.corpus_directory):
+            with open(os.path.join(self.corpus_directory, fname), "r") as f:
+                for line in f:
+                    if line.strip() == "":
+                        continue
+                    else:
+                        yield self.preprocess(line.strip())
+
+    def preprocess(self, line):
+        if self.remove_numbers:
+            line = re.sub(r"[^a-zA-Z]", ' ', line)
+        else:
+            line = re.sub(r"[^a-zA-Z0-9]", ' ', line)
+
+        if self.remove_stop_words:
+            line = "".join([w for w in line.split() if w not in set(stopwords.words("english"))])
+
+        return line.lower()
