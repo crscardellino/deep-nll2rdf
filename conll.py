@@ -43,6 +43,9 @@ class CoNLLSentence(object):
 
         return self.words[position-ws:position+ws+1]
 
+    def get_raw_sentence(self):
+        return " ".join([word.word for word in self.words])
+
     def __str__(self):
         return "\n".join([str(word) for word in self.words])
 
