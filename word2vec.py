@@ -3,9 +3,10 @@
 import argparse
 import os
 import sys
-from corpus import UntaggedCorpusIterator
+
 from gensim.models import Word2Vec
 
+from utils.corpus import UntaggedCorpusIterator
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Word2Vec algorithm")
