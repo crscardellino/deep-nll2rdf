@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
 from corpus import *
+from glob import glob
 from utils import *
 
 
@@ -22,7 +24,9 @@ def parse_conll_document(document_path):
             else:
                 token_data = line.split()
 
-                if len(token_data) == 10:
+                if re.sub(r'\-RRB\-|\-LRB\-|[^a-zA-Z]', '', token_data[1]).strip() == '':
+                    continue
+                elif len(token_data) == 10:
                     label = None
                 elif ODRL_CLASSES_MAPPINGS[token_data[10]] == 1:
                     label = NLL2RDF_CLASSES_MAPPINGS[(1, 0)]
@@ -38,13 +42,36 @@ def parse_conll_document(document_path):
 
                 words.append(
                     WordInstance(
-                        word=token_data[1],
+                        word=re.sub(r'[^a-zA-Z]', '', token_data[1]).strip(),
                         label=label,
                         tag=token_data[3],
                         dependency=token_data[7],
-                        head=token_data[6],
-                        position=token_data[0]
+                        head=int(token_data[6]),
+                        position=int(token_data[0])
                     )
                 )
 
     return CoNLLDocument(sentences)
+
+
+class NLL2RDFCorpus(object):
+    def __init__(self, directory_path):
+        self.directory_path = directory_path
+        self.documents = []
+        self.parse_directory()
+
+    def __iter__(self):
+        for document in self.documents:
+            yield document
+
+    def parse_directory(self):
+        documents_paths = [y for x in os.walk(self.directory_path) for y in glob(os.path.join(x[0], '*.conll'))]
+
+        for document_path in documents_paths:
+            self.documents.append(parse_conll_document(document_path))
+
+    def get_class_corpus(self, class_name, window_size=2):
+        for document in self:
+            for sentence in document:
+                for instance, label in sentence.get_class_corpus(class_name, window_size):
+                    yield instance, label

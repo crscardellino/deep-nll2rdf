@@ -15,17 +15,19 @@ class WordInstance(object):
         self.head = head
         self.position = position
 
-    def get_word_lemma(self):
-        return self.word.lower()  # TODO: Use a lemmatizer?
-
     def __str__(self):
-        if self.label is not None:
+        if self.word == "PADDING":
+            return self.word
+        elif self.label is not None:
             return "%s\t%s" % (self.word, NLL2RDF_CLASSES[self.label])
         else:
-            return "%s\t%s\t%s\t%s\t%s" % (self.position, self.word, self.tag, self.dependency, self.head)
+            return "%d\t%s\t%s\t%s\t%d" % (self.position, self.word, self.tag, self.dependency, self.head)
 
     def __repr__(self):
         return str(self)
+
+    def get_word_lemma(self):
+        return self.word.lower()  # TODO: Use a lemmatizer?
 
 
 class CoNLLSentence(object):
@@ -35,19 +37,9 @@ class CoNLLSentence(object):
     def __getitem__(self, item):
         return self.words[item]
 
-    def get_head_of_word(self, position):
-        if self[position].head == 0:
-            return "root"
-        else:
-            return self[self[position].head - 1]
-
-    def get_window(self, position, window_size=5):
-        ws = int(window_size / 2)
-
-        return self.words[position-ws:position+ws+1]
-
-    def get_raw_sentence(self):
-        return " ".join([word.word for word in self.words])
+    def __iter__(self):
+        for word in self.words:
+            yield word
 
     def __str__(self):
         return "\n".join([str(word) for word in self.words])
@@ -55,10 +47,39 @@ class CoNLLSentence(object):
     def __repr__(self):
         return str(self)
 
+    def get_class_corpus(self, class_name, window_size=2):
+        for position, token in enumerate(self, start=1):
+            window = self.get_window(position, window_size)
+            label = 0 if class_name != token.label else 1
+            yield window, label
+
+    def get_raw_sentence(self):
+        return " ".join([word.word for word in self.words])
+
+    def get_window(self, position, window_size=2):
+        start = position-window_size-1
+        end = position+window_size
+
+        window = []
+
+        for widx in xrange(start, end):
+            if widx < 0:
+                window.append(WordInstance("PADDING"))
+            elif widx >= len(self.words):
+                window.append(WordInstance("PADDING"))
+            else:
+                window.append(self[widx])
+
+        return window
+
 
 class CoNLLDocument(object):
     def __init__(self, sentences):
         self.sentences = sentences
+
+    def __iter__(self):
+        for sentence in self.sentences:
+            yield sentence
 
     def __getitem__(self, item):
         return self.sentences[item]
@@ -71,7 +92,7 @@ class CoNLLDocument(object):
 
 
 class UntaggedCorpusIterator(object):
-    def __init__(self, corpus_directory, remove_numbers=False, remove_stop_words=False):
+    def __init__(self, corpus_directory, remove_numbers=True, remove_stop_words=False):
         self.corpus_directory = corpus_directory
         self.remove_stop_words = remove_stop_words
         self.remove_numbers = remove_numbers
