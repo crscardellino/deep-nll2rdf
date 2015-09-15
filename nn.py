@@ -53,6 +53,8 @@ class NNPipeline(object):
     def _fine_tuning(self, X, Y, encoders):
         self.model = Sequential()
 
+        print >> sys.stderr, 'Fine tuning of the neural network (with regularization)'
+
         for encoder in encoders:
             self.model.add(encoder)
 
@@ -61,7 +63,7 @@ class NNPipeline(object):
 
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
 
-        self.model.fit(X, Y, batch_size=self.batch_size, show_accuracy=True)
+        self.model.fit(X, Y, batch_size=self.batch_size, show_accuracy=True, nb_epoch=self.epochs)
 
     def fit(self, X, y):
         Y = np_utils.to_categorical(y, self.classes)
@@ -79,7 +81,9 @@ class NNPipeline(object):
             print >> sys.stderr, "Stratified {}-Fold Cross-Validation".format(self.kfolds)
 
             for fold, (train_idx, test_idx) in enumerate(StratifiedKFold(y, self.kfolds, shuffle=True), start=1):
-                print >> sys.stderr, "Fold {}".format(fold)
+                print >> sys.stderr, "Fold {}: {} train examples, {} test examples".format(
+                    fold, train_idx.shape[0], test_idx.shape[0]
+                )
                 Xtrain, Xtest = X[train_idx], X[test_idx]
                 ytrain, ytest = y[train_idx], y[test_idx]
 
@@ -105,8 +109,9 @@ class NNPipeline(object):
                 fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[0], recall_scores[0], f1_scores[0]))
                 fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[1], recall_scores[1], f1_scores[1]))
         else:
-            print >> sys.stderr, "Test {} Split\n".format(self.test_split)
+            sys.stderr.write("Test {} Split: ".format(self.test_split))
             Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=self.test_split)
+            print >> sys.stderr, "{} train examples, {} test examples".format(Xtrain.shape[0], Xtest.shape[0])
 
             self.fit(Xtrain, ytrain)
             ypred = self.model.predict_classes(Xtest)

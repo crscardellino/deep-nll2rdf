@@ -50,7 +50,7 @@ if __name__ == "__main__":
         if class_number == 0:  # Ignore the NO-CLASS
             continue
 
-        print >> sys.stderr, "Setting up training for class {}".format(class_name.lower())
+        print >> sys.stderr, "Setting up training for class {}".format(class_name)
 
         X = []
         y = []
