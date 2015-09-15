@@ -40,10 +40,10 @@ class CoNLLSentence(object):
     def __repr__(self):
         return str(self)
 
-    def get_class_corpus(self, class_number, window_size=2):
+    def get_corpus_instances(self, window_size=2):
         for position, token in enumerate(self, start=1):
             window = self.get_window(position, window_size)
-            label = 0 if class_number != token.label else 1
+            label = 0 if token.label is None else token.label
             yield window, label
 
     def get_raw_sentence(self):

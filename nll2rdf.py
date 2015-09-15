@@ -46,42 +46,35 @@ if __name__ == "__main__":
 
     # We have one model for each class
     print >> sys.stderr, "Training and testing the models"
-    for class_number, class_name in enumerate(utils.NLL2RDF_CLASSES):
-        if class_number == 0:  # Ignore the NO-CLASS
-            continue
+    X = []
+    y = []
+    instances_set = set()
 
-        print >> sys.stderr, "\n\nSetting up training for class {}".format(class_name)
+    for window, label in nll2rdf_corpus.get_corpus_instances(args.window):
+        vectors = []
+        for token in window:
+            if token.word in word2vec:
+                word = token.word
+            elif token.word.lower() in word2vec:
+                word = token.word.lower()
+            elif token.word.capitalize() in word2vec:
+                word = token.word.capitalize()
+            elif token.word.upper() in word2vec:
+                word = token.word.upper()
+            else:
+                word = "unknown"  # Default for rest of cases
 
-        X = []
-        y = []
+            vectors.append(word2vec[word])
 
-        class_directory = os.path.join(args.output_dir, class_name.lower())
-        os.mkdir(class_directory)
-
-        for window, label in nll2rdf_corpus.get_class_corpus(class_number, args.window):
-            vectors = []
-            for token in window:
-                if token.word in word2vec:
-                    word = token.word
-                elif token.word.lower() in word2vec:
-                    word = token.word.lower()
-                elif token.word.capitalize() in word2vec:
-                    word = token.word.capitalize()
-                elif token.word.upper() in word2vec:
-                    word = token.word.upper()
-                else:
-                    word = "unknown"  # Default for rest of cases
-
-                vectors.append(word2vec[word])
-
+        if (np.hstack(vectors), label) not in instances_set:  # Not keeping dups
             X.append(np.hstack(vectors))
             y.append(label)
 
-        X = np.vstack(X)
-        y = np.array(y)
+    X = np.vstack(X)
+    y = np.array(y)
 
-        pipeline = NNPipeline(args.layers, args.activation, args.epochs, kfolds=args.kfolds,
-                              test_split=args.test_split)
+    pipeline = NNPipeline(args.layers, args.activation, args.epochs, kfolds=args.kfolds,
+                          test_split=args.test_split)
 
-        print >> sys.stderr, "Training and saving model and results"
-        pipeline.save_score(X, y, class_directory, True)
+    print >> sys.stderr, "Training and saving model and results"
+    pipeline.save_score(X, y, class_directory, True)
