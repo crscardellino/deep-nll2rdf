@@ -51,7 +51,7 @@ if __name__ == "__main__":
     instances_set = set()
 
     for window, label in nll2rdf_corpus.get_corpus_instances(args.window):
-        vectors = []
+        vector = []
         for token in window:
             if token.word in word2vec:
                 word = token.word
@@ -64,10 +64,10 @@ if __name__ == "__main__":
             else:
                 word = "unknown"  # Default for rest of cases
 
-            vectors.append(word2vec[word])
+            vector.append(word2vec[word])
 
-        if (np.hstack(vectors), label) not in instances_set:  # Not keeping dups
-            X.append(np.hstack(vectors))
+        if (np.hstack(vector), label) not in instances_set:  # Not keeping dups
+            X.append(np.hstack(vector))
             y.append(label)
 
     X = np.vstack(X)

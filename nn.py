@@ -11,6 +11,7 @@ from keras.regularizers import l2, activity_l2
 from keras.utils import np_utils
 from sklearn.cross_validation import StratifiedKFold, train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+from utils import NLL2RDF_CLASSES
 
 np.random.seed(1337)  # for reproducibility
 
@@ -106,8 +107,10 @@ class NNPipeline(object):
                 fobj.write("Accuracy: {:.2f}\n".format(accuracies))
 
                 fobj.write("Class\tPrec\tRec\tF1\n")
-                fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[0], recall_scores[0], f1_scores[0]))
-                fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[1], recall_scores[1], f1_scores[1]))
+                for i in xrange(precision_scores.shape[0]):
+                    fobj.write("{}\t{:.2f}\t{:.2f}\t{:.2f}\n".format(
+                        NLL2RDF_CLASSES[i], precision_scores[i], recall_scores[i], f1_scores[i]
+                    ))
         else:
             sys.stderr.write("\nTest {} Split: ".format(self.test_split))
             Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=self.test_split)
@@ -124,8 +127,10 @@ class NNPipeline(object):
                 fobj.write("Accuracy: {:.2f}\n".format(accuracy))
 
                 fobj.write("Class\tPrec\tRec\tF1\n")
-                fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision[0], recall[0], fscore[0]))
-                fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision[1], recall[1], fscore[1]))
+                for i in xrange(precision.shape[0]):
+                    fobj.write("{}\t{:.2f}\t{:.2f}\t{:.2f}\n".format(
+                        NLL2RDF_CLASSES[i], precision[i], recall[i], fscore[i])
+                    )
 
         if save_model:
             self.fit(X, y)
