@@ -7,27 +7,20 @@ from utils import NLL2RDF_CLASSES
 
 
 class WordInstance(object):
-    def __init__(self, word, label=None, tag=None, dependency=None, head=None, position=None):
+    def __init__(self, word, label=None, tag=None, dependency=None):
         self.word = word
         self.label = label
         self.tag = tag
         self.dependency = dependency
-        self.head = head
-        self.position = position
 
     def __str__(self):
-        if self.word == "PADDING":
+        if self.label is None:
             return self.word
-        elif self.label is not None:
-            return "%s\t%s" % (self.word, NLL2RDF_CLASSES[self.label])
         else:
-            return "%d\t%s\t%s\t%s\t%d" % (self.position, self.word, self.tag, self.dependency, self.head)
+            return "%s\t%s" % (self.word, NLL2RDF_CLASSES[self.label])
 
     def __repr__(self):
         return str(self)
-
-    def get_word_lemma(self):
-        return self.word.lower()  # TODO: Use a lemmatizer?
 
 
 class CoNLLSentence(object):

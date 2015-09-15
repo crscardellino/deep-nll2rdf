@@ -7,7 +7,7 @@ from glob import glob
 from utils import *
 
 
-def parse_conll_document(document_path):
+def parse_nll2rdf_conll_document(document_path):
     sentences = []
     words = []
     odrl_action = 0
@@ -24,7 +24,7 @@ def parse_conll_document(document_path):
             else:
                 token_data = line.split()
 
-                if re.sub(r'\-RRB\-|\-LRB\-|[^a-zA-Z]', '', token_data[1]).strip() == '':
+                if re.sub(r'\-RRB\-|\-LRB\-|\-LSB\-|\-RSB\-|[^a-zA-Z]', '', token_data[1]).strip() == '':
                     continue
                 elif len(token_data) == 10:
                     label = None
@@ -40,16 +40,15 @@ def parse_conll_document(document_path):
 
                     label = NLL2RDF_CLASSES_MAPPINGS[nll2rdf_class]
 
-                words.append(
-                    WordInstance(
-                        word=re.sub(r'[^a-zA-Z]', '', token_data[1]).strip(),
-                        label=label,
-                        tag=token_data[3],
-                        dependency=token_data[7],
-                        head=int(token_data[6]),
-                        position=int(token_data[0])
+                for token in re.sub(r'[^a-zA-Z]', ' ', token_data[1]).split():
+                    words.append(
+                        WordInstance(
+                            word=token.strip(),
+                            label=label,
+                            tag=token_data[3],
+                            dependency=token_data[7],
+                        )
                     )
-                )
 
     return CoNLLDocument(sentences)
 
@@ -68,7 +67,7 @@ class NLL2RDFCorpus(object):
         documents_paths = [y for x in os.walk(self.directory_path) for y in glob(os.path.join(x[0], '*.conll'))]
 
         for document_path in documents_paths:
-            self.documents.append(parse_conll_document(document_path))
+            self.documents.append(parse_nll2rdf_conll_document(document_path))
 
     def get_class_corpus(self, class_name, window_size=2):
         for document in self:
