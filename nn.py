@@ -7,6 +7,7 @@ import sys
 from keras.models import Sequential
 from keras.layers import containers
 from keras.layers.core import Dense, AutoEncoder, Dropout
+from keras.regularizers import l2, activity_l2
 from keras.utils import np_utils
 from sklearn.cross_validation import StratifiedKFold, train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
@@ -55,7 +56,8 @@ class NNPipeline(object):
         for encoder in encoders:
             self.model.add(encoder)
 
-        self.model.add(Dense(self.layers[-1], self.classes, activation='softmax'))
+        self.model.add(Dense(self.layers[-1], self.classes, activation='softmax',
+                             W_regularizer=l2(0.01), activity_regularizer=activity_l2(0.01)))
 
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
 

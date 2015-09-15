@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # We have one model for each class
     print >> sys.stderr, "Training and testing the models"
-    for class_number, class_name in utils.NLL2RDF_CLASSES:
+    for class_number, class_name in enumerate(utils.NLL2RDF_CLASSES):
         if class_number == 0:  # Ignore the NO-CLASS
             continue
 
