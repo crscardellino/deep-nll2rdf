@@ -69,8 +69,8 @@ class NLL2RDFCorpus(object):
         for document_path in documents_paths:
             self.documents.append(parse_nll2rdf_conll_document(document_path))
 
-    def get_class_corpus(self, class_name, window_size=2):
+    def get_class_corpus(self, class_number, window_size=2):
         for document in self:
             for sentence in document:
-                for instance, label in sentence.get_class_corpus(class_name, window_size):
+                for instance, label in sentence.get_class_corpus(class_number, window_size):
                     yield instance, label

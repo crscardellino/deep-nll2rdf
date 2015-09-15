@@ -50,7 +50,7 @@ if __name__ == "__main__":
         if class_number == 0:  # Ignore the NO-CLASS
             continue
 
-        print >> sys.stderr, "Setting up training for class {}".format(class_name)
+        print >> sys.stderr, "\n\nSetting up training for class {}".format(class_name)
 
         X = []
         y = []
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         class_directory = os.path.join(args.output_dir, class_name.lower())
         os.mkdir(class_directory)
 
-        for window, label in nll2rdf_corpus.get_class_corpus(class_name, args.window):
+        for window, label in nll2rdf_corpus.get_class_corpus(class_number, args.window):
             vectors = []
             for token in window:
                 if token.word in word2vec:

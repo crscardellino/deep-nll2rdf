@@ -78,10 +78,10 @@ class NNPipeline(object):
             recall_scores = []
             f1_scores = []
 
-            print >> sys.stderr, "Stratified {}-Fold Cross-Validation".format(self.kfolds)
+            print >> sys.stderr, "\nStratified {}-Fold Cross-Validation".format(self.kfolds)
 
             for fold, (train_idx, test_idx) in enumerate(StratifiedKFold(y, self.kfolds, shuffle=True), start=1):
-                print >> sys.stderr, "Fold {}: {} train examples, {} test examples".format(
+                print >> sys.stderr, "\nFold {}: {} train examples, {} test examples".format(
                     fold, train_idx.shape[0], test_idx.shape[0]
                 )
                 Xtrain, Xtest = X[train_idx], X[test_idx]
@@ -109,7 +109,7 @@ class NNPipeline(object):
                 fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[0], recall_scores[0], f1_scores[0]))
                 fobj.write("Neg\t{:.2f}\t{:.2f}\t{:.2f}\n".format(precision_scores[1], recall_scores[1], f1_scores[1]))
         else:
-            sys.stderr.write("Test {} Split: ".format(self.test_split))
+            sys.stderr.write("\nTest {} Split: ".format(self.test_split))
             Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=self.test_split)
             print >> sys.stderr, "{} train examples, {} test examples".format(Xtrain.shape[0], Xtest.shape[0])
 
