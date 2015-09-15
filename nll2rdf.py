@@ -82,4 +82,4 @@ if __name__ == "__main__":
                           test_split=args.test_split, classes=len(utils.NLL2RDF_CLASSES))
 
     print >> sys.stderr, "Training and saving model and results"
-    pipeline.save_score(X, y, class_directory, True)
+    pipeline.save_score(X, y, args.output_dir, True)
