@@ -11,7 +11,7 @@ from keras.utils import np_utils
 from sklearn.cross_validation import StratifiedKFold, train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
-np.random.seed(1337) # for reproducibility
+np.random.seed(1337)  # for reproducibility
 
 
 class NNPipeline(object):
@@ -38,7 +38,7 @@ class NNPipeline(object):
             print >> sys.stderr, ('Training the layer {}: Input {} -> Output {}'.format(i, n_in, n_out))
             # Create AE and training
             ae = Sequential()
-            encoder = containers.Sequential([Dense(n_in, n_out, activation=self.activation), Dropout(0.2)])
+            encoder = containers.Sequential([Dropout(0.3), Dense(n_in, n_out, activation=self.activation)])
             decoder = containers.Sequential([Dense(n_out, n_in, activation=self.activation)])
             ae.add(AutoEncoder(encoder=encoder, decoder=decoder, output_reconstruction=False))
             ae.compile(loss='mean_squared_error', optimizer='sgd')
