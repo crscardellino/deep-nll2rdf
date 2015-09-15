@@ -66,9 +66,14 @@ if __name__ == "__main__":
 
             vector.append(word2vec[word])
 
-        if (np.hstack(vector), label) not in instances_set:  # Not keeping dups
+        ins_id = np.hstack(vector)
+        ins_id.flags.writeable = False
+        ins_id = hash((ins_id.data, label))
+
+        if ins_id not in instances_set:  # Not keeping dups
             X.append(np.hstack(vector))
             y.append(label)
+            instances_set.add(ins_id)
 
     X = np.vstack(X)
     y = np.array(y)
