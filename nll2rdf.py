@@ -61,7 +61,18 @@ if __name__ == "__main__":
         for window, label in nll2rdf_corpus.get_class_corpus(class_name, args.window):
             vectors = []
             for token in window:
-                vectors.append(word2vec[token.word])
+                if token.word in word2vec:
+                    word = token.word
+                elif token.word.lower() in word2vec:
+                    word = token.word.lower()
+                elif token.word.capitalize() in word2vec:
+                    word = token.word.capitalize()
+                elif token.word.upper() in word2vec:
+                    word = token.word.upper()
+                else:
+                    word = "unknown"  # Default for rest of cases
+
+                vectors.append(word2vec[word])
 
             X.append(np.hstack(vectors))
             y.append(label)
