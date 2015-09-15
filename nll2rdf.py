@@ -74,7 +74,7 @@ if __name__ == "__main__":
     y = np.array(y)
 
     pipeline = NNPipeline(args.layers, args.activation, args.epochs, kfolds=args.kfolds,
-                          test_split=args.test_split)
+                          test_split=args.test_split, classes=len(utils.NLL2RDF_CLASSES))
 
     print >> sys.stderr, "Training and saving model and results"
     pipeline.save_score(X, y, class_directory, True)
